@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { getItem, setItem } from '@/lib/storage';
 import { generateId } from '@/lib/utils';
@@ -39,7 +40,7 @@ export default function MessageForm({ onSubmitted }: MessageFormProps) {
   if (!user) {
     return (
       <div className="bg-amber-50 rounded-xl p-4 text-center text-sm text-amber-700">
-        请先 <a href="/login" className="underline font-medium">登录</a> 后再留言
+        请先 <Link href="/login" className="underline font-medium">登录</Link> 后再留言
       </div>
     );
   }

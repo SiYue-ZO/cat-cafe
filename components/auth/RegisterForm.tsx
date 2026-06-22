@@ -2,14 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { validateUsername, validatePassword, validatePhone, validateEmail, validatorMessages } from '@/lib/validators';
 import Button from '@/components/ui/Button';
 import { Cat } from 'lucide-react';
 
 export default function RegisterForm() {
+  const { register, login } = useAuth();
   const router = useRouter();
-  const { register } = useAuth();
   const [form, setForm] = useState({ username: '', password: '', confirmPassword: '', phone: '', email: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -29,7 +30,9 @@ export default function RegisterForm() {
     if (!validate()) return;
     const err = register({ username: form.username, password: form.password, phone: form.phone, email: form.email });
     if (err) { setErrors({ username: err }); return; }
-    router.push('/login');
+    const loginErr = login(form.username, form.password);
+    if (loginErr) { router.push('/login'); return; }
+    router.push('/');
   };
 
   const inputClass = (field: string) =>
@@ -67,7 +70,7 @@ export default function RegisterForm() {
           <Button type="submit" className="w-full">注册</Button>
         </form>
         <p className="text-center text-sm text-gray-500 mt-4">
-          已有账号？<a href="/login" className="text-amber-600 hover:underline">去登录</a>
+          已有账号？<Link href="/login" className="text-amber-600 hover:underline">去登录</Link>
         </p>
       </div>
     </div>

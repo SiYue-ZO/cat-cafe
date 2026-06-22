@@ -14,11 +14,27 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+/** 预设演示账号 */
+const DEMO_USER: User = {
+  id: 'demo-001',
+  username: 'demo',
+  password: 'demo123',
+  phone: '13800138000',
+  email: 'demo@catcafe.com',
+  role: 'user',
+  createdAt: new Date().toISOString(),
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // 若无用户数据，写入预设演示账号
+    const users = getItem<User[]>('users') || [];
+    if (users.length === 0) {
+      setItem('users', [DEMO_USER]);
+    }
     const saved = getItem<User>('current-user');
     if (saved) setUser(saved);
     setLoading(false);

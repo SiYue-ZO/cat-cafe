@@ -2,14 +2,15 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import { validateUsername, validatePassword, validatorMessages } from '@/lib/validators';
 import Button from '@/components/ui/Button';
 import { Cat } from 'lucide-react';
 
 export default function LoginForm() {
-  const router = useRouter();
   const { login } = useAuth();
+  const router = useRouter();
   const [form, setForm] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
 
@@ -40,7 +41,7 @@ export default function LoginForm() {
           <Button type="submit" className="w-full">登录</Button>
         </form>
         <p className="text-center text-sm text-gray-500 mt-4">
-          还没有账号？<a href="/register" className="text-amber-600 hover:underline">去注册</a>
+          还没有账号？<Link href="/register" className="text-amber-600 hover:underline">去注册</Link>
         </p>
       </div>
     </div>

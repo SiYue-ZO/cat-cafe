@@ -25,13 +25,3 @@ export function removeItem(key: string): void {
   if (typeof window === 'undefined') return;
   localStorage.removeItem(PREFIX + key);
 }
-
-export function getString(key: string): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(PREFIX + key);
-}
-
-export function setString(key: string, value: string): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(PREFIX + key, value);
-}

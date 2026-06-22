@@ -71,6 +71,8 @@ export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   createdAt: string;
+  isError?: boolean;
+  isStreaming?: boolean;
 }
 
 /** AI 聊天会话 */

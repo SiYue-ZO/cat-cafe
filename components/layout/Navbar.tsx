@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, ShoppingCart, Cat, Coffee, Home, MessageSquare, User, Bot, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
@@ -35,6 +35,7 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
   const pathname = usePathname();
+  const router = useRouter();
   const { user, logout } = useAuth();
   const { totalItems } = useCart();
 
@@ -110,7 +111,7 @@ export default function Navbar() {
             {user ? (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-600 hidden sm:inline">{user.username}</span>
-                <button onClick={logout} className="p-2 text-gray-400 hover:text-red-500 transition-colors" title="退出登录">
+                <button onClick={() => { logout(); router.push('/'); }} className="p-2 text-gray-400 hover:text-red-500 transition-colors" title="退出登录">
                   <LogOut size={18} />
                 </button>
               </div>

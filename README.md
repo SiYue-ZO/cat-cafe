@@ -14,9 +14,9 @@
 | 状态管理 | React Context + Hooks | 轻量级 |
 | 数据持久化 | localStorage | 纯前端，无后端 |
 | 图标 | Lucide React | 轻量图标库 |
-| AI 能力 | DeepSeek API | 流式输出聊天 |
+| AI 能力 | DeepSeek API | 通过 nginx 代理，流式输出 |
 | 包管理器 | pnpm | 高效包管理 |
-| 部署 | GitHub Pages | 静态导出 |
+| 部署 | Nginx + 静态导出 | 服务器部署 |
 
 ## 功能模块
 
@@ -67,8 +67,9 @@
 
 ### 9. AI 助手（DeepSeek）
 - 聊天式交互界面，流式输出逐字显示
-- API Key 设置弹窗 + 安全提示
+- API Key 由 nginx 反向代理注入，前端完全无感知
 - 聊天历史持久化，支持新建/删除会话
+- 支持停止生成、移动端会话管理
 - 系统提示词：猫咖店长小助手人设
 
 ## 项目结构
@@ -110,6 +111,7 @@ cat-cafe/
 │   └── AIContext.tsx        # AI 助手
 ├── hooks/                  # 自定义 Hooks
 ├── types/                  # TypeScript 类型定义
+├── nginx-catcafe.conf      # Nginx 部署配置
 └── .github/workflows/      # GitHub Actions 部署
 ```
 
@@ -143,9 +145,35 @@ pnpm dev
 pnpm build
 ```
 
-构建产物在 `out/` 目录，可直接部署到 GitHub Pages。
+构建产物在 `out/` 目录，可直接部署到 Web 服务器。
 
-项目已配置 GitHub Actions 自动部署，推送到 `main` 分支即可自动构建部署。
+## 服务器部署
+
+项目使用 Nginx 部署，AI 聊天接口通过 nginx 反向代理 DeepSeek API，API Key 仅存放在 nginx 配置中，前端完全不可见。
+
+### 部署步骤
+
+1. 将 `out/` 目录上传到服务器网站根目录
+2. 将 `nginx-catcafe.conf` 中的配置复制到 1Panel 对应站点
+3. 替换 `sk-你的DeepSeek-API-Key` 为你的真实 API Key
+4. 重载 nginx：`nginx -t && nginx -s reload`
+
+### Nginx 代理原理
+
+```
+浏览器 → nginx（拦截 /api/chat，注入 Authorization 头） → DeepSeek API
+       ← nginx 直接返回静态文件
+```
+
+```nginx
+location /api/chat {
+    proxy_pass https://api.deepseek.com/chat/completions;
+    proxy_ssl_server_name on;
+    proxy_set_header Host api.deepseek.com;
+    proxy_set_header Authorization "Bearer sk-你的真实Key";
+    proxy_buffering off;
+}
+```
 
 ## UI 设计
 
