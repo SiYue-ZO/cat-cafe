@@ -7,7 +7,7 @@ import { getItem, setItem, removeItem } from '@/lib/storage';
 interface AuthContextType {
   user: User | null;
   login: (username: string, password: string) => string | null;
-  register: (user: Omit<User, 'id' | 'role' | 'createdAt'>) => string | null;
+  register: (user: Omit<User, 'id' | 'createdAt'> & { role: 'user' | 'admin' }) => string | null;
   logout: () => void;
   loading: boolean;
 }
@@ -25,15 +25,26 @@ const DEMO_USER: User = {
   createdAt: new Date().toISOString(),
 };
 
+/** 预设管理员账号 */
+const ADMIN_USER: User = {
+  id: 'admin-001',
+  username: 'admin',
+  password: 'admin123',
+  phone: '13800138001',
+  email: 'admin@catcafe.com',
+  role: 'admin',
+  createdAt: new Date().toISOString(),
+};
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 若无用户数据，写入预设演示账号
+    // 若无用户数据，写入预设演示账号和管理员账号
     const users = getItem<User[]>('users') || [];
     if (users.length === 0) {
-      setItem('users', [DEMO_USER]);
+      setItem('users', [DEMO_USER, ADMIN_USER]);
     }
     const saved = getItem<User>('current-user');
     if (saved) setUser(saved);
@@ -49,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return null;
   }, []);
 
-  const register = useCallback((newUser: Omit<User, 'id' | 'role' | 'createdAt'>): string | null => {
+  const register = useCallback((newUser: Omit<User, 'id' | 'createdAt'> & { role: 'user' | 'admin' }): string | null => {
     const users = getItem<User[]>('users') || [];
     if (users.find((u) => u.username === newUser.username)) {
       return '用户名已存在';
@@ -57,7 +68,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const user: User = {
       ...newUser,
       id: Date.now().toString(36) + Math.random().toString(36).slice(2, 8),
-      role: 'user',
       createdAt: new Date().toISOString(),
     };
     users.push(user);

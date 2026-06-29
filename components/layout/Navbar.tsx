@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Menu, X, ShoppingCart, Cat, Coffee, Home, MessageSquare, User, Bot, LogOut, ChevronDown } from 'lucide-react';
+import { Menu, X, ShoppingCart, Cat, Coffee, Home, MessageSquare, User, Bot, LogOut, ChevronDown, Shield } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 
@@ -110,7 +110,10 @@ export default function Navbar() {
 
             {user ? (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600 hidden sm:inline">{user.username}</span>
+                <span className="text-sm text-gray-600 hidden sm:inline flex items-center gap-1">
+                  {user.username}
+                  {user.role === 'admin' && <Shield size={14} className="text-purple-500" />}
+                </span>
                 <button onClick={() => { logout(); router.push('/'); }} className="p-2 text-gray-400 hover:text-red-500 transition-colors" title="退出登录">
                   <LogOut size={18} />
                 </button>

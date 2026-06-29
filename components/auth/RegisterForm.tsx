@@ -11,7 +11,9 @@ import { Cat } from 'lucide-react';
 export default function RegisterForm() {
   const { register, login } = useAuth();
   const router = useRouter();
-  const [form, setForm] = useState({ username: '', password: '', confirmPassword: '', phone: '', email: '' });
+  const [form, setForm] = useState({
+    username: '', password: '', confirmPassword: '', phone: '', email: '', role: 'user' as 'user' | 'admin',
+  });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validate = (): boolean => {
@@ -28,7 +30,7 @@ export default function RegisterForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    const err = register({ username: form.username, password: form.password, phone: form.phone, email: form.email });
+    const err = register({ username: form.username, password: form.password, phone: form.phone, email: form.email, role: form.role });
     if (err) { setErrors({ username: err }); return; }
     const loginErr = login(form.username, form.password);
     if (loginErr) { router.push('/login'); return; }
@@ -66,6 +68,19 @@ export default function RegisterForm() {
           <div>
             <input className={inputClass('email')} placeholder="邮箱" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
             {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-2">角色</label>
+            <div className="flex gap-4">
+              <label className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border cursor-pointer transition-all ${form.role === 'user' ? 'border-amber-400 bg-amber-50 text-amber-700' : 'border-gray-300 text-gray-600 hover:border-amber-200'}`}>
+                <input type="radio" name="role" value="user" checked={form.role === 'user'} onChange={() => setForm({ ...form, role: 'user' })} className="accent-amber-500" />
+                <span className="text-sm">普通用户</span>
+              </label>
+              <label className={`flex items-center gap-2 px-4 py-2.5 rounded-lg border cursor-pointer transition-all ${form.role === 'admin' ? 'border-purple-400 bg-purple-50 text-purple-700' : 'border-gray-300 text-gray-600 hover:border-purple-200'}`}>
+                <input type="radio" name="role" value="admin" checked={form.role === 'admin'} onChange={() => setForm({ ...form, role: 'admin' })} className="accent-purple-500" />
+                <span className="text-sm">管理员</span>
+              </label>
+            </div>
           </div>
           <Button type="submit" className="w-full">注册</Button>
         </form>

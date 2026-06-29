@@ -55,6 +55,16 @@ export interface CartItem {
   quantity: number;
 }
 
+/** 订单 */
+export interface Order {
+  id: string;
+  userId: string;
+  items: CartItem[];
+  totalPrice: number;
+  status: 'pending' | 'completed' | 'cancelled';
+  createdAt: string;
+}
+
 /** 留言 */
 export interface Message {
   id: string;
