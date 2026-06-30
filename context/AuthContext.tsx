@@ -41,10 +41,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // 若无用户数据，写入预设演示账号和管理员账号
+    // 确保本地用户数据包含预设演示账号和管理员账号
     const users = getItem<User[]>('users') || [];
+    let shouldWrite = false;
+    // 如果没有任何用户，写入两个预设账号
     if (users.length === 0) {
       setItem('users', [DEMO_USER, ADMIN_USER]);
+    } else {
+      // 若已有用户但缺少演示账号或管理员账号，则补齐
+      if (!users.find((u) => u.username === DEMO_USER.username)) {
+        users.push(DEMO_USER);
+        shouldWrite = true;
+      }
+      if (!users.find((u) => u.username === ADMIN_USER.username)) {
+        users.push(ADMIN_USER);
+        shouldWrite = true;
+      }
+      if (shouldWrite) setItem('users', users);
     }
     const saved = getItem<User>('current-user');
     if (saved) setUser(saved);

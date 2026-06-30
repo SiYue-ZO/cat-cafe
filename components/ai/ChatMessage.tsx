@@ -2,6 +2,9 @@
 
 import type { ChatMessage as ChatMessageType } from '@/types';
 import { Bot, User, AlertCircle } from 'lucide-react';
+import { marked } from 'marked';
+import DOMPurify from 'isomorphic-dompurify';
+import { useMemo } from 'react';
 
 interface ChatMessageProps {
   message: ChatMessageType;
@@ -14,6 +17,15 @@ export default function ChatMessage({ message }: ChatMessageProps) {
 
   // 空消息不渲染（流式输出前的占位气泡）
   if (!isUser && !message.content && !isError) return null;
+
+  const html = useMemo(() => {
+    try {
+      const raw = marked.parse(message.content || '');
+      return DOMPurify.sanitize(String(raw));
+    } catch (e) {
+      return message.content || '';
+    }
+  }, [message.content]);
 
   return (
     <div className={`flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -35,7 +47,9 @@ export default function ChatMessage({ message }: ChatMessageProps) {
             <span className="text-xs font-medium">出错了</span>
           </div>
         )}
-        <p className="whitespace-pre-wrap">{message.content}</p>
+        <div className="prose prose-sm max-w-full text-sm leading-relaxed dark:prose-invert">
+          <div dangerouslySetInnerHTML={{ __html: html }} />
+        </div>
         {isStreaming && !isUser && (
           <span className="inline-block w-2 h-4 ml-0.5 bg-purple-400 animate-pulse rounded-sm" />
         )}

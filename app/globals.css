@@ -94,3 +94,42 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
 }
+
+/* Markdown (prose) 基础样式，配合 tailwind 的 prose 类 */
+.prose {
+  color: var(--color-text);
+}
+.prose img {
+  max-width: 100%;
+  border-radius: 6px;
+}
+.prose pre {
+  background: #0f172a;
+  color: #e6edf3;
+  padding: 12px;
+  border-radius: 8px;
+  overflow: auto;
+}
+.prose code {
+  background: rgba(0,0,0,0.04);
+  padding: 0.2rem 0.35rem;
+  border-radius: 6px;
+  font-size: 0.9em;
+}
+.prose blockquote {
+  border-left: 4px solid rgba(59,130,246,0.2);
+  padding-left: 12px;
+  color: var(--color-text-light);
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.prose th, .prose td {
+  border: 1px solid rgba(0,0,0,0.06);
+  padding: 8px 10px;
+}
+.prose a {
+  color: var(--color-secondary);
+  text-decoration: underline;
+}
